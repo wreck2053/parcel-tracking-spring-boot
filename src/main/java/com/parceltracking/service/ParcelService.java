@@ -6,7 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
+import com.parceltracking.dto.ParcelEventRequest;
 import com.parceltracking.model.Parcel;
+import com.parceltracking.model.ParcelEvent;
 
 @Service 
 public class ParcelService {
@@ -31,5 +33,11 @@ public class ParcelService {
             throw new NoSuchElementException("Parcel not found: " + trackingNumber);
         }
         return  parcel;
+    }
+
+    public Parcel addEvent(String trackingNumber, ParcelEventRequest request) {
+        Parcel parcel = getParcel(trackingNumber);
+        parcel.recordEvent(new ParcelEvent(request.getStatus(), request.getTimestamp()));
+        return parcel;
     }
 }

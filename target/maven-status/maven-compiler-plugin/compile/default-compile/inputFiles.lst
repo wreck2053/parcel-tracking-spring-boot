@@ -3,6 +3,9 @@
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/controller/HelloController.java
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/controller/ParcelController.java
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/dto/CreateParcelRequest.java
+/Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/dto/ParcelEventRequest.java
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/model/Parcel.java
+/Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/model/ParcelEvent.java
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/model/ParcelStatus.java
+/Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/service/DuplicateTrackingNumberException.java
 /Users/rahulm2053/Documents/github/parcel-spring-boot/src/main/java/com/parceltracking/service/ParcelService.java
