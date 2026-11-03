@@ -2,10 +2,8 @@ package com.parceltracking.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.parceltracking.dto.CreateParcelRequest;
 import com.parceltracking.dto.ParcelEventRequest;
 import com.parceltracking.model.Parcel;
-import com.parceltracking.model.ParcelEvent;
 import com.parceltracking.service.ParcelService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +22,8 @@ public class ParcelController {
     }
     
     @PostMapping("/parcels")
-    public Parcel createParcel(@RequestBody CreateParcelRequest request) {
-        return service.createParcel(request.getTrackingNumber());
+    public Parcel createParcel() {
+        return service.createParcel();
     }
 
     @GetMapping("/parcels/{trackingNumber}")

@@ -4,15 +4,39 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+@Entity
 public class Parcel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "tracking_number", nullable = false, unique = true)
     private String trackingNumber;
+
+    @Enumerated(EnumType.STRING)
     private ParcelStatus status;
+
+    @OneToMany(mappedBy = "parcel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ParcelEvent> history = new ArrayList<>();
 
     public Parcel (String trackingNumber) {
         this.trackingNumber = trackingNumber;
         this.status = ParcelStatus.CREATED;
-        history.add(new ParcelEvent(status, Instant.now()));
+        addEventToHistory(new ParcelEvent(status, Instant.now()));
+    }
+
+    protected Parcel() {
+
     }
 
     public String getTrackingNumber() {
@@ -67,6 +91,11 @@ public class Parcel {
             status = event.getStatus();
         }
 
+        addEventToHistory(event);
+    }
+
+    private void addEventToHistory(ParcelEvent event) {
+        event.setParcel(this);
         history.add(event);
     }
 }

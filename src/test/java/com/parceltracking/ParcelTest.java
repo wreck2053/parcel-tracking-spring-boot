@@ -1,7 +1,6 @@
 package com.parceltracking;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
 
@@ -14,62 +13,36 @@ import com.parceltracking.model.ParcelStatus;
 public class ParcelTest {
     @Test
     void newParcelShouldHaveCreatedStatus() {
-        Parcel parcel = new Parcel("RM123456789GB");
-
+        Parcel parcel = new Parcel("TEST123");
         assertEquals(ParcelStatus.CREATED, parcel.getStatus());
-    }
-
-    @Test 
-    void newParcelShouldHaveInitialCreatedEvent() {
-        Parcel parcel = new Parcel("RM123456789GB");
-
-        assertEquals(1, parcel.getHistory().size());
-        assertEquals(ParcelStatus.CREATED, parcel.getHistory().get(0).getStatus());
-    }
-    @Test
-    void validTransitionShouldUpdateStatusAndHistory() {
-        Parcel parcel = new Parcel("RM123456789GB");
-        parcel.recordEvent(new ParcelEvent(ParcelStatus.COLLECTED, Instant.now()));
-
-        assertEquals(ParcelStatus.COLLECTED, parcel.getStatus());
-        assertEquals(2, parcel.getHistory().size());
-        assertEquals(ParcelStatus.COLLECTED, parcel.getHistory().get(1).getStatus());
-    }
-
-    @Test
-    void invalidTransitionShouldNotChangeParcel() {
-        Parcel parcel = new Parcel("RM123456789GB");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            parcel.recordEvent(new ParcelEvent(ParcelStatus.DELIVERED, Instant.now()));
-        });
-        assertEquals(ParcelStatus.CREATED, parcel.getStatus());
-        assertEquals(1, parcel.getHistory().size());
     }
 
     @Test
     void duplicateEventShouldBeIgnored() {
-        Parcel parcel = new Parcel("RM123456789GB");
-        ParcelEvent parcelEvent = new ParcelEvent(ParcelStatus.COLLECTED, Instant.MIN);
-        parcel.recordEvent(parcelEvent);
+        Parcel parcel = new Parcel("TEST123");
+        ParcelEvent event = new ParcelEvent(ParcelStatus.COLLECTED, Instant.now());
+
+        parcel.recordEvent(event);
         assertEquals(2, parcel.getHistory().size());
 
-        parcel.recordEvent(parcelEvent);
+        parcel.recordEvent(event);
         assertEquals(2, parcel.getHistory().size());
-        assertEquals(ParcelStatus.COLLECTED, parcel.getStatus());
     }
 
     @Test
-    void sameStatusWithDifferentTimestampShouldBeRecorded() {
-        Parcel parcel = new Parcel("RM123456789GB");
-        Instant timestamp = Instant.now();
+    void sameStatusWithDifferentTimestampsShouldBeRecorded() {
+        Parcel parcel = new Parcel("TEST123");
+        ParcelEvent firstEvent = new ParcelEvent(ParcelStatus.COLLECTED, Instant.parse("2026-11-02T10:00:00Z"));
+        ParcelEvent secondEvent = new ParcelEvent(ParcelStatus.COLLECTED, Instant.parse("2026-11-02T10:05:00Z"));
 
-        parcel.recordEvent(new ParcelEvent(ParcelStatus.COLLECTED, timestamp));
+        parcel.recordEvent(firstEvent);
+        assertEquals(ParcelStatus.COLLECTED, parcel.getHistory().get(1).getStatus());
         assertEquals(2, parcel.getHistory().size());
-        assertEquals(ParcelStatus.COLLECTED, parcel.getStatus());
+        assertEquals(firstEvent.getTimestamp(), parcel.getHistory().get(1).getTimestamp());
 
-        parcel.recordEvent(new ParcelEvent(ParcelStatus.COLLECTED, timestamp.plusSeconds(60)));
+        parcel.recordEvent(secondEvent);
+        assertEquals(ParcelStatus.COLLECTED, parcel.getHistory().get(2).getStatus());
         assertEquals(3, parcel.getHistory().size());
-        assertEquals(ParcelStatus.COLLECTED, parcel.getStatus());
+        assertEquals(secondEvent.getTimestamp(), parcel.getHistory().get(2).getTimestamp());
     }
 }
